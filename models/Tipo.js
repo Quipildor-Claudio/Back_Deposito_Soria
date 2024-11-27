@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 
+
+// FAMILIA
 const tipoSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
         unique: true,
     },
+    observacion:{type:String}
     // Add other fields as needed
 });
 

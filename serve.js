@@ -6,6 +6,8 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const roleRoutes = require('./routes/roleRouter');
 const serviceRoutes = require('./routes/serviceRoutes');
+const tipoRoutes = require('./routes/tipoRouter');
+
 
 
 // Conexión a la base de datos
@@ -19,6 +21,7 @@ app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 app.use(roleRoutes);
 app.use(serviceRoutes);
+app.use(tipoRoutes);
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
