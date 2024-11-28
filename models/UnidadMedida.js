@@ -6,7 +6,8 @@ const unidadSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    // Add other fields as needed
+    observacion: { type: String, default: '' },
+        // Add other fields as needed
 });
 
 const UnidadMedida = mongoose.model('UnidadMedida', unidadSchema);

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const ProductoSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    price: { type: Number, required: true },
+    price: { type: Number,default: 0 },
     stock: { type: Number, required: true, default: 0 },
     observation: { type: String, default: '' },
     marca: {
@@ -17,6 +17,8 @@ const ProductoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UnidadMedida', // Referencing the Role model
     },
-});
+},
+{ timestamps: true } 
+);
 
 module.exports = mongoose.model('Producto', ProductoSchema);

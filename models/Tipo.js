@@ -8,7 +8,7 @@ const tipoSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    observacion:{type:String}
+    observacion:{type:String,default:""}
     // Add other fields as needed
 });
 

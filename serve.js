@@ -7,7 +7,9 @@ const authRoutes = require('./routes/authRoutes');
 const roleRoutes = require('./routes/roleRouter');
 const serviceRoutes = require('./routes/serviceRoutes');
 const tipoRoutes = require('./routes/tipoRouter');
-
+const marcaRoutes = require('./routes/marcaRoute');
+const unidadRoutes = require('./routes/unidadMedida');
+const productoRoutes = require('./routes/productoRoutes');
 
 
 // Conexión a la base de datos
@@ -22,6 +24,9 @@ app.use('/auth', authRoutes);
 app.use(roleRoutes);
 app.use(serviceRoutes);
 app.use(tipoRoutes);
+app.use(marcaRoutes);
+app.use(unidadRoutes);
+app.use(productoRoutes);
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
