@@ -252,6 +252,7 @@ var movimientoController = {
 
 
 }
+
 function generateMovementHTML(movement, text, service) {
     const serviceNumver = new NumberToWordsService();
     const letra = serviceNumver.convertNumberToWords(movement.total);

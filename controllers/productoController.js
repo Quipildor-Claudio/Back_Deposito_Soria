@@ -53,6 +53,12 @@ var productoController = {
     },
     save: async (req, res) => {
         try {
+            // Verificar si ya existe un producto con el mismo nombre
+            const existingItem = await Producto.findOne({ name: req.body.name });
+            if (existingItem) {
+                return res.status(400).json({ message: 'Ya existe un producto con el mismo nombre' });
+            }
+    
             const item = new Producto(req.body);
             const savedItem = await item.save();
             res.status(201).json(savedItem);
