@@ -6,7 +6,8 @@ var productoController = {
             const items = await Producto.find()
              .populate('marca')
              .populate('tipo')
-             .populate('unidad');
+             .populate('unidad')
+             .limit(50);
             res.json(items);
         } catch (err) {
             res.status(500).json({ message: err.message });
