@@ -11,5 +11,9 @@ router.post('/producto',productoController.save);
 router.put('/producto/:id',productoController.update);
 router.delete('/producto/:id',productoController.delete);
 
+router.get('/searchnom',productoController.getProductoByName);
+router.get('/searchid',productoController.getProductoById);
+
+
 
 module.exports = router;

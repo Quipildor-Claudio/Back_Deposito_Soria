@@ -1,4 +1,5 @@
 const Marca = require('../models/Marca');
+const Counter = require('../models/Counter');
 var marcaController = {
 
     getAll: async (req, res) => {
@@ -21,6 +22,8 @@ var marcaController = {
         }
     },
     save: async (req, res) => {
+      
+
         try {
             const item = new Marca(req.body);
             const savedItem = await item.save();
@@ -57,3 +60,4 @@ var marcaController = {
 }
 
 module.exports = marcaController;
+

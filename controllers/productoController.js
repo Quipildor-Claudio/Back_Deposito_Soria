@@ -4,10 +4,10 @@ var productoController = {
     getAll: async (req, res) => {
         try {
             const items = await Producto.find()
-             .populate('marca')
-             .populate('tipo')
-             .populate('unidad')
-             .limit(50);
+                .populate('marca')
+                .populate('tipo')
+                .populate('unidad')
+                .limit(50);
             res.json(items);
         } catch (err) {
             res.status(500).json({ message: err.message });
@@ -56,7 +56,36 @@ var productoController = {
         } catch (err) {
             res.status(500).json({ message: err.message });
         }
+    },
+    getProductoById: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const productos = await Producto.find({ _id: new RegExp(`^${id}`, 'i') })
+                .populate('marca')
+                .populate('tipo')
+                .populate('unidad')
+                .limit(50);
+            if (!productos) return res.status(404).json({ message: 'Producto no encontrado' });
+            res.status(200).json(productos);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    // Buscar productos por nombre
+    getProductoByName: async (req, res) => {
+        try {
+            const { name } = req.query;
+            const productos = await Producto.find({ name: new RegExp(`^${name}`, 'i') })
+                .populate('marca')
+                .populate('tipo')
+                .populate('unidad')
+                .limit(20);
+            res.status(200).json(productos);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
+
 
 }
 

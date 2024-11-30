@@ -10,6 +10,8 @@ const tipoRoutes = require('./routes/tipoRouter');
 const marcaRoutes = require('./routes/marcaRoute');
 const unidadRoutes = require('./routes/unidadMedida');
 const productoRoutes = require('./routes/productoRoutes');
+const movimientoRoutes = require('./routes/movimientoRoute');
+
 
 
 // Conexión a la base de datos
@@ -27,7 +29,7 @@ app.use(tipoRoutes);
 app.use(marcaRoutes);
 app.use(unidadRoutes);
 app.use(productoRoutes);
-
+app.use(movimientoRoutes);
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor corriendo en el puerto ${PORT}`));
