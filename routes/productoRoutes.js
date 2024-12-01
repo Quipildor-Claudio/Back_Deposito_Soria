@@ -13,6 +13,7 @@ router.delete('/producto/:id',productoController.delete);
 
 router.get('/searchnom',productoController.getProductoByName);
 router.get('/searchid',productoController.getProductoById);
+router.post('/actualizar-stock',productoController.actulizarCant);
 
 
 

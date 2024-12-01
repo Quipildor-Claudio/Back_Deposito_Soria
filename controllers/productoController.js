@@ -84,6 +84,24 @@ var productoController = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
+    },
+
+    actulizarCant:async(req,res)=>{
+        const productosSeleccionados = req.body;
+
+        try {
+            for (const producto of productosSeleccionados) {
+              await Producto.updateOne(
+                { _id: producto._id },
+                { $inc: { stock: -producto.cantidad.value } } // Resta la cantidad al stock
+              );
+            }
+            res.status(200).send({ mensaje: 'Stock actualizado correctamente' });
+          } catch (error) {
+            console.error('Error actualizando el stock:', error);
+            res.status(500).send({ mensaje: 'Error actualizando el stock' });
+          }
+
     }
 
 
