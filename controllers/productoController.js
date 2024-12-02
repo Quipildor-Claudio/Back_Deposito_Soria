@@ -85,23 +85,28 @@ var productoController = {
             res.status(500).json({ error: error.message });
         }
     },
-
-    actulizarCant:async(req,res)=>{
-        const productosSeleccionados = req.body;
-
+    actulizarCant: async (req, res) => {
+        const { comprobantes, type } = req.body; // Se esperan los comprobantes y el tipo ("IN" o "OUT")
+    
+        if (!type || !['IN', 'OUT'].includes(type)) {
+            return res.status(400).send({ mensaje: 'Tipo de operación inválido (debe ser "IN" o "OUT")' });
+        }
+    
         try {
-            for (const producto of productosSeleccionados) {
-              await Producto.updateOne(
-                { _id: producto._id },
-                { $inc: { stock: -producto.cantidad.value } } // Resta la cantidad al stock
-              );
+            for (const comprobante of comprobantes) {
+                const ajuste = type === 'IN' ? comprobante.cantidad : -comprobante.cantidad;
+    
+                await Producto.updateOne(
+                    { _id: comprobante.product._id }, // Busca el producto por su ID
+                    { $inc: { stock: ajuste } } // Suma o resta dependiendo del tipo
+                );
             }
+    
             res.status(200).send({ mensaje: 'Stock actualizado correctamente' });
-          } catch (error) {
+        } catch (error) {
             console.error('Error actualizando el stock:', error);
             res.status(500).send({ mensaje: 'Error actualizando el stock' });
-          }
-
+        }
     }
 
 

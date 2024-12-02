@@ -3,17 +3,37 @@ const Schema = mongoose.Schema;
 const generateAutoIncrementCode = require('../controllers/counterController'); // Función del código
 
 const MovementSchema = new mongoose.Schema({
-  products:[{
-    type: Schema.Types.ObjectId, ref: 'Producto' 
+
+  comprobantes:[{
+    product: {
+      _id: mongoose.Schema.Types.ObjectId,
+      name: String,
+      observation: String,
+      min: Number,
+      tipo: {
+        _id: mongoose.Schema.Types.ObjectId,
+        name: String,
+        observacion: String,
+      },
+      unidad: {
+        _id: mongoose.Schema.Types.ObjectId,
+        name: String,
+        observacion: String,
+      },
+    },
+    cantidad: Number,
   }],
   type: { type: String, enum: ['IN', 'OUT'], required: true }, // IN: ingreso, OUT: egreso
-  date: { type: Date, default: Date.now },
-  hora:{type:String},
-  user:{ type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  cod:{type:String},
-  service:{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' },
-  observacion:{type:String},
-  code:{type:String}
+  date: {
+    type: String, // Guardaremos la fecha como un string en formato YYYY-MM-DD
+    required: true,
+    default: () => new Date().toISOString().split('T')[0], // Solo la parte de la fecha
+  },
+  hora: { type: String },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  service: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' },
+  observacion: { type: String },
+  code: { type: String }
 });
 
 // Middleware pre-save para generar el código automáticamente

@@ -1,16 +1,10 @@
-const Movimiento = require('../models/Movimiento');
+const Comprobante = require('../models/Comprobante');
 
-
-var movimientoController = {
+var ComprobanteController = {
 
     getAll: async (req, res) => {
         try {
-            const items = await Movimiento.find()
-            .populate('user')
-            .populate('service')
-
-         
-
+            const items = await Comprobante.find().populate('product');
             res.json(items);
         } catch (err) {
             res.status(500).json({ message: err.message });
@@ -18,7 +12,7 @@ var movimientoController = {
     },
     getOne: async (req, res) => {
         try {
-            const item = await Movimiento.findById(req.params.id);
+            const item = await Comprobante.findById(req.params.id);
             if (item == null) {
                 return res.status(404).json({ message: 'Item no encontrado' });
             }
@@ -28,10 +22,10 @@ var movimientoController = {
         }
     },
     save: async (req, res) => {
-        
+      
+
         try {
-            const item = new Movimiento(req.body);
-            console.log(item);
+            const item = new Comprobante(req.body);
             const savedItem = await item.save();
             res.status(201).json(savedItem);
         } catch (err) {
@@ -41,7 +35,7 @@ var movimientoController = {
 
     update: async (req, res) => {
         try {
-            const updatedItem = await Movimiento.findByIdAndUpdate(req.params.id, req.body, { new: true });
+            const updatedItem = await Comprobante.findByIdAndUpdate(req.params.id, req.body, { new: true });
             if (updatedItem == null) {
                 return res.status(404).json({ message: 'Item no encontrado' });
             }
@@ -65,5 +59,5 @@ var movimientoController = {
 
 }
 
-module.exports = movimientoController;
+module.exports = ComprobanteController;
 

@@ -1,7 +1,23 @@
 const mongoose = require('mongoose');
 
 const ComprobanteSchema = new mongoose.Schema({
-    name: { type: String, required: true },
+    product: {
+        _id: mongoose.Schema.Types.ObjectId,
+        name: String,
+        observation: String,
+        min: Number,
+        tipo: {
+          _id: mongoose.Schema.Types.ObjectId,
+          name: String,
+          observacion: String,
+        },
+        unidad: {
+          _id: mongoose.Schema.Types.ObjectId,
+          name: String,
+          observacion: String,
+        },
+      },
+    cantidad: { type: Number, default: 0 },
 });
-
-module.exports = mongoose.model('Comprobante', ComprobanteSchema);
+const Comprobante = mongoose.model('Comprobante', ComprobanteSchema);
+module.exports = Comprobante;
