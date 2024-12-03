@@ -1,6 +1,33 @@
 const Producto = require('../models/Producto');
 var productoController = {
 
+    getAllPag: async (req, res) => {
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 50;
+            const skip = (page - 1) * limit;
+
+            const items = await Producto.find()
+                .populate('marca')
+                .populate('tipo')
+                .populate('unidad')
+                .sort({ _id: -1 })
+                .skip(skip).limit(limit);
+            const totalItems = await Producto.countDocuments();
+            const totalPages = Math.ceil(totalItems / limit);
+
+            res.json({
+                //  items: items.reverse(), 
+                items,
+                totalItems,
+                totalPages,
+                currentPage: page
+            });
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    },
+
     getAll: async (req, res) => {
         try {
             const items = await Producto.find()
@@ -48,7 +75,7 @@ var productoController = {
 
     delete: async (req, res) => {
         try {
-            const deletedItem = await Servicio.findByIdAndDelete(req.params.id);
+            const deletedItem = await Producto.findByIdAndDelete(req.params.id);
             if (deletedItem == null) {
                 return res.status(404).json({ message: 'Item no encontrado' });
             }
@@ -87,21 +114,21 @@ var productoController = {
     },
     actulizarCant: async (req, res) => {
         const { comprobantes, type } = req.body; // Se esperan los comprobantes y el tipo ("IN" o "OUT")
-    
+
         if (!type || !['IN', 'OUT'].includes(type)) {
             return res.status(400).send({ mensaje: 'Tipo de operación inválido (debe ser "IN" o "OUT")' });
         }
-    
+
         try {
             for (const comprobante of comprobantes) {
                 const ajuste = type === 'IN' ? comprobante.cantidad : -comprobante.cantidad;
-    
+
                 await Producto.updateOne(
                     { _id: comprobante.product._id }, // Busca el producto por su ID
                     { $inc: { stock: ajuste } } // Suma o resta dependiendo del tipo
                 );
             }
-    
+
             res.status(200).send({ mensaje: 'Stock actualizado correctamente' });
         } catch (error) {
             console.error('Error actualizando el stock:', error);

@@ -47,7 +47,7 @@ var marcaController = {
 
     delete: async (req, res) => {
         try {
-            const deletedItem = await Servicio.findByIdAndDelete(req.params.id);
+            const deletedItem = await Marca.findByIdAndDelete(req.params.id);
             if (deletedItem == null) {
                 return res.status(404).json({ message: 'Item no encontrado' });
             }

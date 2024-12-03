@@ -53,7 +53,9 @@ var userController = {
     },
     getOne: async (req, res) => {
         try {
-            const item = await User.findById(req.params.id);
+            const item = await User.findById(req.params.id)
+            .populate('service')
+            .populate('role');
             if (item == null) {
                 return res.status(404).json({ message: 'Item no encontrado' });
             }

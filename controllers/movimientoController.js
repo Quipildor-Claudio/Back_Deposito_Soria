@@ -18,7 +18,9 @@ var movimientoController = {
     },
     getOne: async (req, res) => {
         try {
-            const item = await Movimiento.findById(req.params.id);
+            const item = await Movimiento.findById(req.params.id)
+            .populate('user')
+            .populate('service');
             if (item == null) {
                 return res.status(404).json({ message: 'Item no encontrado' });
             }
