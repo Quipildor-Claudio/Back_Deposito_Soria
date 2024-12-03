@@ -4,12 +4,15 @@ const generateAutoIncrementCode = require('../controllers/counterController'); /
 
 const MovementSchema = new mongoose.Schema({
 
-  comprobantes:[{
+  comprobantes: [{
     product: {
       _id: mongoose.Schema.Types.ObjectId,
       name: String,
       observation: String,
       min: Number,
+      stock:Number,
+      price:Number,
+      code:String,
       tipo: {
         _id: mongoose.Schema.Types.ObjectId,
         name: String,
@@ -32,8 +35,13 @@ const MovementSchema = new mongoose.Schema({
   hora: { type: String },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   service: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' },
-  observacion: { type: String },
-  code: { type: String }
+  observacion: { type: String, default: '' },
+  code: { type: String, default: '' },
+  remito: { type: String, default: '' },
+  proveedor: { type: String, default: '' },
+  compra: { type: String, default: '' },
+  expediente: { type: String, default: '' },
+  total: { type: Number, default: 0 },
 });
 
 // Middleware pre-save para generar el código automáticamente
