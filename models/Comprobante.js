@@ -4,6 +4,7 @@ const ComprobanteSchema = new mongoose.Schema({
     product: {
         _id: mongoose.Schema.Types.ObjectId,
         name: String,
+        code:String,
         observation: String,
         min: Number,
         tipo: {

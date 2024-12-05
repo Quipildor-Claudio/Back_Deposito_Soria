@@ -6,9 +6,9 @@ var movimientoController = {
     getAll: async (req, res) => {
         try {
             const items = await Movimiento.find()
-            .populate('user')
-            .populate('service')
-            .sort({ _id: -1 });
+                .populate('user')
+                .populate('service')
+                .sort({ _id: -1 });
             res.json(items);
         } catch (err) {
             res.status(500).json({ message: err.message });
@@ -17,8 +17,8 @@ var movimientoController = {
     getOne: async (req, res) => {
         try {
             const item = await Movimiento.findById(req.params.id)
-            .populate('user')
-            .populate('service');
+                .populate('user')
+                .populate('service');
             if (item == null) {
                 return res.status(404).json({ message: 'Item no encontrado' });
             }
@@ -28,7 +28,7 @@ var movimientoController = {
         }
     },
     save: async (req, res) => {
-        
+
         try {
             const item = new Movimiento(req.body);
             console.log(item);
@@ -53,13 +53,39 @@ var movimientoController = {
 
     delete: async (req, res) => {
         try {
-            const deletedItem = await Servicio.findByIdAndDelete(req.params.id);
+            const deletedItem = await Movimiento.findByIdAndDelete(req.params.id);
             if (deletedItem == null) {
                 return res.status(404).json({ message: 'Item no encontrado' });
             }
             res.json({ message: 'Item eliminado' });
         } catch (err) {
             res.status(500).json({ message: err.message });
+        }
+    },
+    findMovementsByDateRange: async (req, res) => {
+        const { startDate, endDate } = req.query;
+        console.log(req.query);
+        try {
+          // Validar que ambas fechas existan
+          if (!startDate || !endDate) {
+            return res.status(400).json({ error: 'Debe proporcionar startDate y endDate.' });
+          }
+      
+          // Validar formato de las fechas
+          const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+          if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+            return res.status(400).json({ error: 'Las fechas deben estar en formato YYYY-MM-DD.' });
+          }
+      
+          // Buscar movimientos dentro del rango
+          const movements = await Movimiento.find({
+            date: { $gte: startDate, $lte: endDate },
+          }).populate('service').populate('user');
+      
+          return res.status(200).json(movements);
+        } catch (error) {
+          console.error('Error al buscar movimientos:', error.message);
+          return res.status(500).json({ error: 'Error interno del servidor.' });
         }
     }
 

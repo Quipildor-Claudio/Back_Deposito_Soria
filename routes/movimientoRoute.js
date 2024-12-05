@@ -11,5 +11,7 @@ router.post('/movimiento',movimientoController.save);
 router.put('/movimiento/:id',movimientoController.update);
 router.delete('/movimiento/:id',movimientoController.delete);
 
+router.get('/bydate',movimientoController.findMovementsByDateRange);
+
 
 module.exports = router;
