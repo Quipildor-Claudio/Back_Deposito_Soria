@@ -8,6 +8,7 @@ const ProductoSchema = new mongoose.Schema({
     observation: { type: String, default: '' },
     code: { type: String, default: '' },
     min: { type: Number, default: 0 }, //stock minimo
+    vencimiento:{ type: String, default: '' },
     marca: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Marca', // Referencing the Role model
