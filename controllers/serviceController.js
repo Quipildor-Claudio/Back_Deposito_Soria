@@ -3,7 +3,8 @@ var serviceController = {
 
     getAll: async (req, res) => {
         try {
-            const items = await Service.find();
+            const items = await Service.find()
+            .sort({ _id: -1 });;
             res.json(items);
         } catch (err) {
             res.status(500).json({ message: err.message });

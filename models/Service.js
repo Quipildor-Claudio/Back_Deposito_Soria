@@ -6,6 +6,10 @@ const serviceSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+
+    observacion: {
+        type: String,
+    },
     // Add other fields as needed
 });
 
