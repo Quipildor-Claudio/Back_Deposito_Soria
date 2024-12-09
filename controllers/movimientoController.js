@@ -66,28 +66,77 @@ var movimientoController = {
         const { startDate, endDate } = req.query;
         console.log(req.query);
         try {
-          // Validar que ambas fechas existan
-          if (!startDate || !endDate) {
-            return res.status(400).json({ error: 'Debe proporcionar startDate y endDate.' });
-          }
-      
-          // Validar formato de las fechas
-          const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-          if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
-            return res.status(400).json({ error: 'Las fechas deben estar en formato YYYY-MM-DD.' });
-          }
-      
-          // Buscar movimientos dentro del rango
-          const movements = await Movimiento.find({
-            date: { $gte: startDate, $lte: endDate },
-          }).populate('service').populate('user');
-      
-          return res.status(200).json(movements);
+            // Validar que ambas fechas existan
+            if (!startDate || !endDate) {
+                return res.status(400).json({ error: 'Debe proporcionar startDate y endDate.' });
+            }
+
+            // Validar formato de las fechas
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+                return res.status(400).json({ error: 'Las fechas deben estar en formato YYYY-MM-DD.' });
+            }
+
+            // Buscar movimientos dentro del rango
+            const movements = await Movimiento.find({
+                date: { $gte: startDate, $lte: endDate },
+            }).populate('service').populate('user');
+
+            return res.status(200).json(movements);
         } catch (error) {
-          console.error('Error al buscar movimientos:', error.message);
-          return res.status(500).json({ error: 'Error interno del servidor.' });
+            console.error('Error al buscar movimientos:', error.message);
+            return res.status(500).json({ error: 'Error interno del servidor.' });
+        }
+    },
+    getMovementsByProductAndDateRange: async (productId, startDate, endDate) =>{
+        try {
+            // Validar que las fechas estén en formato correcto
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+                throw new Error('Las fechas deben estar en formato YYYY-MM-DD.');
+            }
+
+            // Buscar movimientos que incluyan el producto y estén en el rango de fechas
+            const movements = await Movement.find({
+                date: { $gte: startDate, $lte: endDate },
+                comprobantes: {
+                    $elemMatch: {
+                        'product._id': mongoose.Types.ObjectId(productId),
+                    },
+                },
+            }).populate('user').populate('service');
+
+            return movements;
+        } catch (error) {
+            console.error('Error al obtener movimientos:', error.message);
+            throw error;
+        }
+    },
+    getMovementsByServiceAndDateRange: async (serviceId, startDate, endDate) =>{
+        try {
+            // Validar que las fechas estén en formato correcto
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+                throw new Error('Las fechas deben estar en formato YYYY-MM-DD.');
+            }
+
+            // Buscar movimientos que incluyan el servicos y estén en el rango de fechas
+            const movements = await Movement.find({
+                date: { $gte: startDate, $lte: endDate },
+                comprobantes: {
+                    $elemMatch: {
+                        'product.service': mongoose.Types.ObjectId(serviceId),
+                    },
+                },
+            }).populate('user').populate('service');
+
+            return movements;
+        } catch (error) {
+            console.error('Error al obtener movimientos:', error.message);
+            throw error;
         }
     }
+
 
 }
 
