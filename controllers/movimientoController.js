@@ -3,6 +3,30 @@ const Movimiento = require('../models/Movimiento');
 
 var movimientoController = {
 
+    getAllPag: async (req, res) => {
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 50;
+            const skip = (page - 1) * limit;
+
+            const items = await Movimiento.find()
+                .populate('user')
+                .populate('service')
+                .sort({ _id: -1 })
+                .skip(skip).limit(limit);
+            const totalItems = await Movimiento.countDocuments();
+            const totalPages = Math.ceil(totalItems / limit);
+            res.json({
+                items,
+                totalItems,
+                totalPages,
+                currentPage: page
+            });
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    },
+
     getAll: async (req, res) => {
         try {
             const items = await Movimiento.find()
@@ -88,7 +112,7 @@ var movimientoController = {
             return res.status(500).json({ error: 'Error interno del servidor.' });
         }
     },
-    getMovementsByProductAndDateRange: async (productId, startDate, endDate) =>{
+    getMovementsByProductAndDateRange: async (productId, startDate, endDate) => {
         try {
             // Validar que las fechas estén en formato correcto
             const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -112,7 +136,7 @@ var movimientoController = {
             throw error;
         }
     },
-    getMovementsByServiceAndDateRange: async (serviceId, startDate, endDate) =>{
+    getMovementsByServiceAndDateRange: async (serviceId, startDate, endDate) => {
         try {
             // Validar que las fechas estén en formato correcto
             const dateRegex = /^\d{4}-\d{2}-\d{2}$/;

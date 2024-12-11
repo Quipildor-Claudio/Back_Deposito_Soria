@@ -5,7 +5,7 @@ const router = express.Router();
 
 /**  Rutas movimiento */
 
-router.get('/movimientos',movimientoController.getAll);
+router.get('/movimientos',movimientoController.getAllPag);
 router.get('/movimiento/:id',movimientoController.getOne);
 router.post('/movimiento',movimientoController.save);
 router.put('/movimiento/:id',movimientoController.update);
