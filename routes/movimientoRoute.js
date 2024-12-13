@@ -13,5 +13,6 @@ router.delete('/movimiento/:id',movimientoController.delete);
 
 router.get('/bydate',movimientoController.findMovementsByDateRange);
 
+router.get('/generate-pdf/:id',movimientoController.generatePdf);
 
 module.exports = router;
