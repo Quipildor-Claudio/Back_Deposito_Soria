@@ -206,7 +206,10 @@ var movimientoController = {
             </html>`;
 
             // Iniciar Puppeteer y generar el PDF
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({
+                headless: true, // Es necesario para servidores
+                args: ['--no-sandbox', '--disable-setuid-sandbox'], // Opciones para evitar problemas de permisos
+              });
             const page = await browser.newPage();
             await page.setContent(htmlContent);
 
