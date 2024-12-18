@@ -12,6 +12,10 @@ router.put('/movimiento/:id',movimientoController.update);
 router.delete('/movimiento/:id',movimientoController.delete);
 
 router.get('/bydate',movimientoController.findMovementsByDateRange);
+router.get('/bydateproduct',movimientoController.getMovementsByProductAndDateRange);
+router.get('/bydateservice',movimientoController.getMovementsByServiceAndDateRange);
+
+
 
 router.get('/generate-pdf/:id',movimientoController.generatePdf);
 

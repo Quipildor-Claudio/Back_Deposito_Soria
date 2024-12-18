@@ -4,6 +4,8 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 const NumberToWordsService = require('../models/NumberToWordsService');
+const mongoose = require('mongoose');
+
 var movimientoController = {
 
     getAllPag: async (req, res) => {
@@ -108,14 +110,19 @@ var movimientoController = {
             const movements = await Movimiento.find({
                 date: { $gte: startDate, $lte: endDate },
             }).populate('service').populate('user');
-
+            console.log(movements);
             return res.status(200).json(movements);
         } catch (error) {
             console.error('Error al buscar movimientos:', error.message);
             return res.status(500).json({ error: 'Error interno del servidor.' });
         }
     },
-    getMovementsByProductAndDateRange: async (productId, startDate, endDate) => {
+    getMovementsByProductAndDateRange: async (req, res) => {
+        const { startDate, endDate, productId } = req.query;
+        console.log(productId, startDate, endDate);
+        const productIdObject = mongoose.Types.ObjectId.isValid(productId)
+            ? new mongoose.Types.ObjectId(productId)
+            : productId;
         try {
             // Validar que las fechas estén en formato correcto
             const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -124,11 +131,11 @@ var movimientoController = {
             }
 
             // Buscar movimientos que incluyan el producto y estén en el rango de fechas
-            const movements = await Movement.find({
+            const movements = await Movimiento.find({
                 date: { $gte: startDate, $lte: endDate },
                 comprobantes: {
                     $elemMatch: {
-                        'product._id': mongoose.Types.ObjectId(productId),
+                        'product._id': productIdObject,
                     },
                 },
             }).populate('user').populate('service');
@@ -139,28 +146,35 @@ var movimientoController = {
             throw error;
         }
     },
-    getMovementsByServiceAndDateRange: async (serviceId, startDate, endDate) => {
+    getMovementsByServiceAndDateRange: async (req, res) => {
+        const { startDate, endDate, serviceId } = req.query;
+        console.log("---------------Servicio------------------");
+        console.log(startDate, endDate, serviceId);
+        const objectId = mongoose.Types.ObjectId.isValid(serviceId)
+            ? new mongoose.Types.ObjectId(serviceId)
+            : null;
         try {
-            // Validar que las fechas estén en formato correcto
-            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-            if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
-                throw new Error('Las fechas deben estar en formato YYYY-MM-DD.');
+            // Validar que ambas fechas existan
+            if (!startDate || !endDate) {
+                return res.status(400).json({ error: 'Debe proporcionar startDate y endDate.' });
             }
 
-            // Buscar movimientos que incluyan el servicos y estén en el rango de fechas
-            const movements = await Movement.find({
-                date: { $gte: startDate, $lte: endDate },
-                comprobantes: {
-                    $elemMatch: {
-                        'product.service': mongoose.Types.ObjectId(serviceId),
-                    },
-                },
-            }).populate('user').populate('service');
+            // Validar formato de las fechas
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+                return res.status(400).json({ error: 'Las fechas deben estar en formato YYYY-MM-DD.' });
+            }
 
-            return movements;
+            // Buscar movimientos dentro del rango
+            const movements = await Movimiento.find({
+                date: { $gte: startDate, $lte: endDate },
+                'service': serviceId,
+            }).populate('service').populate('user');
+            console.log(movements);
+            return res.status(200).json(movements);
         } catch (error) {
-            console.error('Error al obtener movimientos:', error.message);
-            throw error;
+            console.error('Error al buscar movimientos:', error.message);
+            return res.status(500).json({ error: 'Error interno del servidor.' });
         }
     },
     generatePdf: async (req, res) => {
@@ -209,7 +223,7 @@ var movimientoController = {
             const browser = await puppeteer.launch({
                 headless: true, // Es necesario para servidores
                 args: ['--no-sandbox', '--disable-setuid-sandbox'], // Opciones para evitar problemas de permisos
-              });
+            });
             const page = await browser.newPage();
             await page.setContent(htmlContent);
 
@@ -264,7 +278,7 @@ function generateMovementHTML(movement, text, service) {
       <td colspan="2">
       <p><strong>Detalle del Movimiento</strong></p>
       <p><strong>Código:</strong> ${movement.code}</p>
-      ${isOut ? `<p><strong>Servicio:</strong> ${movement.service.name || 'No registrado'}</p>` :''}
+      ${isOut ? `<p><strong>Servicio:</strong> ${movement.service.name || 'No registrado'}</p>` : ''}
       <p><strong>Tipo:</strong> ${movement.type === 'IN' ? 'Ingreso' : 'Egreso'}</p>
       <p><strong>Observación:</strong> ${movement.observacion}</p>
       </td>

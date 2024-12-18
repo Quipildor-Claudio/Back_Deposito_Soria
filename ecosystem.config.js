@@ -1,6 +1,6 @@
 module.exports = {
     apps : [{
-      name: "Sistema Deposito Soria Api",
+      name: "Sistema Deposito Soria",
       script: "./serve.js",
       watch:false,
       exec_mode:'cluster',
