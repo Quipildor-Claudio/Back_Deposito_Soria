@@ -117,35 +117,35 @@ var movimientoController = {
             return res.status(500).json({ error: 'Error interno del servidor.' });
         }
     },
+
     getMovementsByProductAndDateRange: async (req, res) => {
-        const { startDate, endDate, productId } = req.query;
-        console.log(productId, startDate, endDate);
-        const productIdObject = mongoose.Types.ObjectId.isValid(productId)
-            ? new mongoose.Types.ObjectId(productId)
-            : productId;
+        const { startDate, endDate, productCode } = req.query;
+        console.log(productCode, startDate, endDate);
         try {
-            // Validar que las fechas estén en formato correcto
-            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-            if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
-                throw new Error('Las fechas deben estar en formato YYYY-MM-DD.');
+            // Validar que ambas fechas existan
+            if (!startDate || !endDate) {
+                return res.status(400).json({ error: 'Debe proporcionar startDate y endDate.' });
             }
 
-            // Buscar movimientos que incluyan el producto y estén en el rango de fechas
+            // Validar formato de las fechas
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+                return res.status(400).json({ error: 'Las fechas deben estar en formato YYYY-MM-DD.' });
+            }
+
+            // Buscar movimientos dentro del rango
             const movements = await Movimiento.find({
                 date: { $gte: startDate, $lte: endDate },
-                comprobantes: {
-                    $elemMatch: {
-                        'product._id': productIdObject,
-                    },
-                },
-            }).populate('user').populate('service');
-
-            return movements;
+                'comprobantes.product.code': productCode,
+            }).populate('service');
+            console.log(movements);
+            return res.status(200).json(movements);
         } catch (error) {
-            console.error('Error al obtener movimientos:', error.message);
-            throw error;
+            console.error('Error al buscar movimientos:', error.message);
+            return res.status(500).json({ error: 'Error interno del servidor.' });
         }
     },
+
     getMovementsByServiceAndDateRange: async (req, res) => {
         const { startDate, endDate, serviceId } = req.query;
         console.log("---------------Servicio------------------");

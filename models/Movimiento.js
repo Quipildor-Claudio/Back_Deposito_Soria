@@ -10,9 +10,9 @@ const MovementSchema = new mongoose.Schema({
       name: String,
       observation: String,
       min: Number,
-      stock:Number,
-      price:Number,
-      code:String,
+      stock: Number,
+      price: Number,
+      code: String,
       tipo: {
         _id: mongoose.Schema.Types.ObjectId,
         name: String,
@@ -51,6 +51,25 @@ MovementSchema.pre('save', async function (next) {
   }
   next();
 });
+
+
+
+MovementSchema.statics.findByService = async function(serviceIdOrName) {
+  try {
+    const movements = await this.find({
+      $or: [
+        { service: mongoose.Types.ObjectId(serviceIdOrName) }, // Si se pasa el `serviceId` (ObjectId)
+        { 'service.name': { $regex: serviceIdOrName, $options: 'i' } } // Si se pasa el `service.name` (cadena)
+      ]
+    });
+
+    return movements;
+  } catch (error) {
+    throw new Error('Error al realizar la búsqueda por servicio: ' + error.message);
+  }
+};
+
+
 
 const Movement = mongoose.model('Movement', MovementSchema);
 
