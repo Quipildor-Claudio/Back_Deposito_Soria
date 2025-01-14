@@ -15,6 +15,9 @@ router.get('/searchnom',productoController.getProductoByName);
 router.get('/searchid',productoController.getProductoById);
 router.post('/actualizar-stock',productoController.actulizarCant);
 
+router.get('/searchpcode/:code',productoController.getProductoByCode);
+
+
 
 
 module.exports = router;

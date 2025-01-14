@@ -24,7 +24,7 @@ const MovementSchema = new mongoose.Schema({
         observacion: String,
       },
     },
-    cantidad: Number,
+    cantidad: { type: Number, default: 0 },
   }],
   type: { type: String, enum: ['IN', 'OUT'], required: true }, // IN: ingreso, OUT: egreso
   date: {

@@ -98,6 +98,23 @@ var productoController = {
             res.status(500).json({ error: error.message });
         }
     },
+    getProductoByCode: async (req, res) => {
+        try {
+            const { code } = req.params;
+            const item = await Producto.find({code:code}) 
+            .populate('marca')
+            .populate('tipo')
+            .populate('unidad');
+            if (item == null) {
+                return res.status(404).json({ message: 'Item no encontrado' });
+            }
+            res.json(item[0]);
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    },
+   
+
     // Buscar productos por nombre
     getProductoByName: async (req, res) => {
         try {
