@@ -17,7 +17,8 @@ router.post('/actualizar-stock',productoController.actulizarCant);
 
 router.get('/searchpcode/:code',productoController.getProductoByCode);
 
-
+router.get('/modificados-sin-stock', productoController.obtenerProductosModificadosSinStock);
+router.get('/stock', productoController.getProductosConStock); // Endpoint para obtener productos con stock
 
 
 module.exports = router;

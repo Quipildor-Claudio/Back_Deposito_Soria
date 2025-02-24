@@ -101,10 +101,11 @@ var productoController = {
     getProductoByCode: async (req, res) => {
         try {
             const { code } = req.params;
-            const item = await Producto.find({code:code}) 
-            .populate('marca')
-            .populate('tipo')
-            .populate('unidad');
+            const item = await Producto.find({ code: code })
+                .populate('marca')
+                .populate('tipo')
+                .populate('unidad')
+
             if (item == null) {
                 return res.status(404).json({ message: 'Item no encontrado' });
             }
@@ -113,13 +114,13 @@ var productoController = {
             res.status(500).json({ message: err.message });
         }
     },
-   
+
 
     // Buscar productos por nombre
     getProductoByName: async (req, res) => {
         try {
             const { name } = req.query;
-            const productos = await Producto.find({ name: new RegExp(`^${name}`, 'i') })
+            const productos = await Producto.find({ name: new RegExp(name, 'i') })
                 .populate('marca')
                 .populate('tipo')
                 .populate('unidad')
@@ -150,6 +151,37 @@ var productoController = {
         } catch (error) {
             console.error('Error actualizando el stock:', error);
             res.status(500).send({ mensaje: 'Error actualizando el stock' });
+        }
+    },
+
+    obtenerProductosModificadosSinStock : async (req, res) => {
+        try {
+            const fechaLimite = new Date();
+            fechaLimite.setDate(fechaLimite.getDate() - 90); // Últimos 30 días
+    
+            const productos = await Producto.find({
+                updatedAt: { $gte: fechaLimite },  // Filtra productos modificados recientemente
+                stock: { $lte: 10 }                // Stock menor o igual a 10
+            }).populate('marca tipo unidad');      // Cargar datos relacionados
+    
+            res.status(200).json({
+                success: true,
+                productos
+            });
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: 'Error al obtener los productos',
+                error: error.message
+            });
+        }
+    },
+    getProductosConStock : async (req, res) => {
+        try {
+            const productos = await Producto.find({ stock: { $gt: 0 } }); // Filtrar productos con stock > 0
+            res.status(200).json(productos); // Responder con la lista de productos
+        } catch (error) {
+            res.status(500).json({ message: 'Error al obtener productos con stock', error });
         }
     }
 

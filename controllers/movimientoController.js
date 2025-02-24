@@ -60,7 +60,7 @@ var movimientoController = {
 
         try {
             const item = new Movimiento(req.body);
-            console.log(item);
+            //console.log(item);
             const savedItem = await item.save();
             res.status(201).json(savedItem);
         } catch (err) {
@@ -93,7 +93,7 @@ var movimientoController = {
     },
     findMovementsByDateRange: async (req, res) => {
         const { startDate, endDate } = req.query;
-        console.log(req.query);
+        //console.log(req.query);
         try {
             // Validar que ambas fechas existan
             if (!startDate || !endDate) {
@@ -120,7 +120,7 @@ var movimientoController = {
 
     getMovementsByProductAndDateRange: async (req, res) => {
         const { startDate, endDate, productCode } = req.query;
-        console.log(productCode, startDate, endDate);
+        //console.log(productCode, startDate, endDate);
         try {
             // Validar que ambas fechas existan
             if (!startDate || !endDate) {
@@ -177,6 +177,7 @@ var movimientoController = {
             return res.status(500).json({ error: 'Error interno del servidor.' });
         }
     },
+    
     generatePdf: async (req, res) => {
         try {
             // Consultar el movimiento por ID
